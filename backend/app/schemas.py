@@ -55,3 +55,33 @@ class GeminiModelInfo(BaseModel):
 
 class GeminiModelsOut(BaseModel):
     models: List[GeminiModelInfo]
+
+
+class ChatIn(BaseModel):
+    message: str
+    lang: str = "en"
+    context: Optional[dict] = None
+
+
+class ChatOut(BaseModel):
+    response: str
+
+
+class CitiesOut(BaseModel):
+    cities: List[str]
+
+
+class PreferenceIn(BaseModel):
+    id: str
+    language: str = "en"
+    notification_time: str = "08:00"
+    voice_enabled: bool = True
+    assistant_name: str = "Maya"
+
+
+class PreferenceOut(BaseModel):
+    id: str
+    language: str
+    notification_time: str
+    voice_enabled: bool
+    assistant_name: str

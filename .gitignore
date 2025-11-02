@@ -1,80 +1,225 @@
-# Environment Variables (IMPORTANT: Never commit real API keys)
-.env
-.env.local
-.env.*.local
-backend/.env
-frontend/.env
-
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
 # Virtual Environment
-backend/.venv/
-backend/venv/
-backend/ENV/
-backend/env/
+venv/
+.venv/
+ENV/
+env/
+.env.local
 
-# Database
+# Backend specific
+backend/__pycache__/
+backend/app/__pycache__/
 backend/*.db
 backend/*.sqlite
 backend/*.sqlite3
 backend/weather.db
 
-# Node.js
-frontend/node_modules/
-frontend/.pnp
-frontend/.pnp.js
+# Environment variables (keep .env.example)
+.env
+!.env.example
 
-# Next.js
-frontend/.next/
-frontend/out/
+# Node / React
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Frontend build
 frontend/build/
+frontend/dist/
+frontend/.cache/
+frontend/.parcel-cache/
 
-# IDE
+# Testing
+coverage/
+*.coverage
+.nyc_output
+.pytest_cache/
+htmlcov/
+.tox/
+
+# IDEs
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+pip-log.txt
 
 # OS
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
-
-# Logs
-*.log
-logs/
-npm-debug.log*
-yarn-debug.log*
-
-# Testing
-coverage/
-.pytest_cache/
-.coverage
-
-# Build outputs
-dist/
-build/
+desktop.ini
 
 # Temporary files
 *.tmp
 *.temp
+*.swp
+*.swo
+*~
+.cache
+
+# Production
+/build
+/dist
+
+# Misc
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+.npm
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# Local env files
+.env*.local
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# Package lock files (optional - uncomment if you want to ignore them)
+# package-lock.json
+# yarn.lock
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Next.js build output (if used)
+.next/
+out/
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
 .cache/
+public
 
-# Documentation builds (optional)
+# vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# Documentation build
 docs/_build/
-site/
 
-# Project-specific
-backend/app/__pycache__/
-frontend/.turbo/
-frontend/.vercel/
+# Jupyter Notebook
+.ipynb_checkpoints
 
-# Keep example environment files
-!.env.example
-!backend/.env.example
-!frontend/.env.example
+# pyenv
+.python-version
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/

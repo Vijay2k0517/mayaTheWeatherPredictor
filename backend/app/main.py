@@ -6,8 +6,12 @@ from dotenv import load_dotenv
 from typing import List
 
 from .database import Base, engine, get_db
-from .models import Query, WeatherLog
-from .schemas import WeatherIn, WeatherOut, VoiceIn, RouteIn, RouteOut, MoodIn, MoodOut, Bilingual, KeysOut, GeminiModelsOut
+from .models import Query, WeatherLog, UserPreference
+from .schemas import (
+    WeatherIn, WeatherOut, VoiceIn, RouteIn, RouteOut, MoodIn, MoodOut, 
+    Bilingual, KeysOut, GeminiModelsOut, ChatIn, ChatOut, CitiesOut, 
+    PreferenceIn, PreferenceOut
+)
 from .weather import fetch_weather, shape_basic_weather, check_openweather_key
 from .gemini import generate_bilingual, check_gemini_key, list_gemini_models
 
@@ -109,3 +113,99 @@ def api_keys():
 def api_gemini_models():
     models = list_gemini_models()
     return {"models": models}
+
+
+@app.get("/api/cities", response_model=CitiesOut)
+def api_cities():
+    """Return list of Tamil Nadu cities"""
+    return {"cities": TN_CITIES}
+
+
+@app.post("/api/chat", response_model=ChatOut)
+def api_chat(payload: ChatIn, db: Session = Depends(get_db)):
+    """Chat endpoint for voice assistant"""
+    # Extract context
+    city = payload.context.get("city", "Chennai") if payload.context else "Chennai"
+    
+    # Get weather if not in context
+    if payload.context and payload.context.get("weather"):
+        # Use provided weather
+        weather_data = payload.context["weather"]
+        temp = weather_data.get("main", {}).get("temp", 25)
+        humidity = weather_data.get("main", {}).get("humidity", 50)
+        condition = weather_data["weather"][0]["main"] if weather_data.get("weather") else "Clear"
+    else:
+        # Fetch fresh weather
+        raw = fetch_weather(city)
+        shaped = shape_basic_weather(raw)
+        temp = shaped["temp"]
+        humidity = shaped["humidity"]
+        condition = shaped["condition"]
+    
+    # Generate bilingual response
+    bilingual = generate_bilingual(
+        city, temp, humidity, condition, 0.0, payload.message
+    )
+    
+    # Store query
+    q = Query(city=city, query_text=payload.message, response_text=bilingual.get("english", ""))
+    db.add(q)
+    db.commit()
+    
+    # Return response in requested language
+    response_text = bilingual.get("tamil" if payload.lang == "ta" else "english", "")
+    return {"response": response_text}
+
+
+@app.get("/api/preferences/{user_id}", response_model=PreferenceOut)
+def get_preferences(user_id: str, db: Session = Depends(get_db)):
+    """Get user preferences"""
+    pref = db.query(UserPreference).filter(UserPreference.id == user_id).first()
+    if not pref:
+        # Create default preferences
+        pref = UserPreference(id=user_id)
+        db.add(pref)
+        db.commit()
+        db.refresh(pref)
+    
+    return PreferenceOut(
+        id=pref.id,
+        language=pref.language,
+        notification_time=pref.notification_time,
+        voice_enabled=bool(pref.voice_enabled),
+        assistant_name=pref.assistant_name
+    )
+
+
+@app.post("/api/preferences", response_model=PreferenceOut)
+def save_preferences(payload: PreferenceIn, db: Session = Depends(get_db)):
+    """Save user preferences"""
+    pref = db.query(UserPreference).filter(UserPreference.id == payload.id).first()
+    
+    if pref:
+        # Update existing
+        pref.language = payload.language
+        pref.notification_time = payload.notification_time
+        pref.voice_enabled = int(payload.voice_enabled)
+        pref.assistant_name = payload.assistant_name
+    else:
+        # Create new
+        pref = UserPreference(
+            id=payload.id,
+            language=payload.language,
+            notification_time=payload.notification_time,
+            voice_enabled=int(payload.voice_enabled),
+            assistant_name=payload.assistant_name
+        )
+        db.add(pref)
+    
+    db.commit()
+    db.refresh(pref)
+    
+    return PreferenceOut(
+        id=pref.id,
+        language=pref.language,
+        notification_time=pref.notification_time,
+        voice_enabled=bool(pref.voice_enabled),
+        assistant_name=pref.assistant_name
+    )

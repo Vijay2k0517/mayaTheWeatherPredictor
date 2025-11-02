@@ -28,3 +28,12 @@ class WeatherLog(Base):
     humidity = Column(Float)
     condition = Column(String)
     date = Column(DateTime, default=datetime.utcnow)
+
+class UserPreference(Base):
+    __tablename__ = "user_preferences"
+    id = Column(String, primary_key=True, index=True)
+    language = Column(String, default="en")
+    notification_time = Column(String, default="08:00")
+    voice_enabled = Column(Integer, default=1)  # SQLite doesn't have boolean
+    assistant_name = Column(String, default="Maya")
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
